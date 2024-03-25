@@ -1,0 +1,32 @@
+[package]
+name = "core-media"
+description = "Bindings to CoreMedia framework"
+homepage = "https://github.com/libark/core-media"
+repository = "https://github.com/libark/core-media"
+version = "0.1.7"
+authors = ["Zhou Wei <zhouwei@ehom.net>"]
+license = "MIT OR Apache-2.0"
+categories = ["multimedia", "os::macos-apis"]
+keywords = ["coremedia"]
+edition = "2018"
+
+[dependencies]
+block = "0.1"
+cfg-if = "1.0"
+core-foundation = "0.9"
+core-graphics-types = "0.1"
+core-audio-types = "0.1"
+libc = "0.2"
+
+[dependencies.core-video]
+version = "0.1"
+default-features = false
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"
+targets = [
+    "x86_64-apple-darwin",
+    "x86_64-apple-ios",
+    "aarch64-apple-darwin",
+    "aarch64-apple-ios",
+]
