@@ -333,9 +333,6 @@ declare_TCFType! {
 }
 impl_TCFType!(CMSampleBuffer, CMSampleBufferRef, CMSampleBufferGetTypeID);
 
-pub type CMSampleBufferMakeDataReadyClosure = dyn Fn(CMSampleBuffer) -> OSStatus + 'static;
-pub type CMSampleBufferInvalidateClosure = dyn Fn(CMSampleBuffer) + 'static;
-
 impl CMSampleBuffer {
     pub unsafe fn new(
         data_buffer: Option<&CMBlockBuffer>,
@@ -371,21 +368,25 @@ impl CMSampleBuffer {
         }
     }
 
-    pub fn new_with_make_data_ready_closure(
+    pub fn new_with_make_data_ready_closure<F>(
         data_buffer: Option<&CMBlockBuffer>,
         data_ready: bool,
         format_description: Option<&CMFormatDescription>,
         num_samples: CMItemCount,
         sample_timing_array: Option<&[CMSampleTimingInfo]>,
         sample_size_array: Option<&[size_t]>,
-        make_data_ready_closure: Option<&CMSampleBufferMakeDataReadyClosure>,
-    ) -> Result<CMSampleBuffer, OSStatus> {
+        make_data_ready_closure: Option<F>,
+    ) -> Result<CMSampleBuffer, OSStatus>
+    where
+        F: Fn(CMSampleBuffer) -> OSStatus + 'static,
+    {
         let mut sample_buffer = null();
         let handler = make_data_ready_closure.map(|closure| {
             ConcreteBlock::new(move |sbuf: CMSampleBufferRef| -> OSStatus {
                 let sbuf = unsafe { CMSampleBuffer::wrap_under_get_rule(sbuf) };
                 closure(sbuf)
             })
+            .copy()
         });
         let status = unsafe {
             CMSampleBufferCreateWithMakeDataReadyHandler(
@@ -469,21 +470,25 @@ impl CMSampleBuffer {
         }
     }
 
-    pub fn new_audio_sample_buffer_with_packet_descriptions_and_make_data_ready_closure(
+    pub fn new_audio_sample_buffer_with_packet_descriptions_and_make_data_ready_closure<F>(
         data_buffer: Option<&CMBlockBuffer>,
         data_ready: bool,
         format_description: &CMFormatDescription,
         num_samples: CMItemCount,
         presentation_time_stamp: CMTime,
         packet_descriptions: Option<&[AudioStreamPacketDescription]>,
-        make_data_ready_closure: Option<&CMSampleBufferMakeDataReadyClosure>,
-    ) -> Result<CMSampleBuffer, OSStatus> {
+        make_data_ready_closure: Option<F>,
+    ) -> Result<CMSampleBuffer, OSStatus>
+    where
+        F: Fn(CMSampleBuffer) -> OSStatus + 'static,
+    {
         let mut sample_buffer = null();
         let handler = make_data_ready_closure.map(|closure| {
             ConcreteBlock::new(move |sbuf: CMSampleBufferRef| -> OSStatus {
                 let sbuf = unsafe { CMSampleBuffer::wrap_under_get_rule(sbuf) };
                 closure(sbuf)
             })
+            .copy()
         });
         let status = unsafe {
             CMAudioSampleBufferCreateWithPacketDescriptionsAndMakeDataReadyHandler(
@@ -557,19 +562,23 @@ impl CMSampleBuffer {
         }
     }
 
-    pub fn from_image_buffer_with_make_data_ready_closure(
+    pub fn from_image_buffer_with_make_data_ready_closure<F>(
         image_buffer: &CVImageBuffer,
         data_ready: bool,
         format_description: &CMVideoFormatDescription,
         sample_timing: &CMSampleTimingInfo,
-        make_data_ready_closure: Option<&CMSampleBufferMakeDataReadyClosure>,
-    ) -> Result<CMSampleBuffer, OSStatus> {
+        make_data_ready_closure: Option<F>,
+    ) -> Result<CMSampleBuffer, OSStatus>
+    where
+        F: Fn(CMSampleBuffer) -> OSStatus + 'static,
+    {
         let mut sample_buffer = null();
         let handler = make_data_ready_closure.map(|closure| {
             ConcreteBlock::new(move |sbuf: CMSampleBufferRef| -> OSStatus {
                 let sbuf = unsafe { CMSampleBuffer::wrap_under_get_rule(sbuf) };
                 closure(sbuf)
             })
+            .copy()
         });
         let status = unsafe {
             CMSampleBufferCreateForImageBufferWithMakeDataReadyHandler(
@@ -760,7 +769,10 @@ impl CMSampleBuffer {
         }
     }
 
-    pub fn set_invalidate_closure(&self, invalidate_closure: Option<&CMSampleBufferInvalidateClosure>) -> Result<(), OSStatus> {
+    pub fn set_invalidate_closure<F>(&self, invalidate_closure: Option<F>) -> Result<(), OSStatus>
+    where
+        F: Fn(CMSampleBuffer) + 'static,
+    {
         let status = unsafe {
             CMSampleBufferSetInvalidateHandler(
                 self.as_concrete_TypeRef(),
@@ -770,6 +782,7 @@ impl CMSampleBuffer {
                             let sbuf = CMSampleBuffer::wrap_under_get_rule(sbuf);
                             closure(sbuf);
                         })
+                        .copy()
                     })
                     .as_ref()
                     .map_or(null(), |h| &**h),
@@ -920,7 +933,10 @@ impl CMSampleBuffer {
         }
     }
 
-    pub fn call_closure_for_each_sample(&self, closure: Option<&'static dyn Fn(CMSampleBuffer, CMItemCount) -> OSStatus>) -> Result<(), OSStatus> {
+    pub fn call_closure_for_each_sample<F>(&self, closure: Option<F>) -> Result<(), OSStatus>
+    where
+        F: Fn(CMSampleBuffer, CMItemCount) -> OSStatus + 'static,
+    {
         let status = unsafe {
             CMSampleBufferCallBlockForEachSample(
                 self.as_concrete_TypeRef(),
@@ -930,6 +946,7 @@ impl CMSampleBuffer {
                             let sbuf = CMSampleBuffer::wrap_under_get_rule(sbuf);
                             closure(sbuf, sample_index)
                         })
+                        .copy()
                     })
                     .as_ref()
                     .map_or(null(), |h| &**h),
