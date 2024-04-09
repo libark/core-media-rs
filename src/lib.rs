@@ -13,7 +13,7 @@ extern crate libc;
 pub type OSType = u32;
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]
-#[link(name = "CoreMedia", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreMedia", kind = "framework"))]
 extern "C" {}
 
 pub mod attachment;
