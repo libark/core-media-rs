@@ -1,4 +1,4 @@
-use std::ptr::null_mut;
+use std::ptr::{null, null_mut};
 
 use core_foundation::{
     base::{kCFAllocatorDefault, Boolean, CFAllocatorRef, OSStatus, TCFType},
@@ -30,7 +30,7 @@ extern "C" {
 impl CMClock {
     pub fn new_audio_device_clock(device_uid: &CFString) -> Result<CMClock, OSStatus> {
         unsafe {
-            let mut clock = null_mut();
+            let mut clock: CMClockRef = null_mut();
             let status = CMAudioDeviceClockCreate(kCFAllocatorDefault, device_uid.as_concrete_TypeRef(), &mut clock);
             if status == 0 {
                 Ok(TCFType::wrap_under_create_rule(clock))
@@ -42,7 +42,7 @@ impl CMClock {
 
     pub fn new_audio_device_clock_from_device_id(device_id: AudioDeviceID) -> Result<CMClock, OSStatus> {
         unsafe {
-            let mut clock = null_mut();
+            let mut clock: CMClockRef = null_mut();
             let status = CMAudioDeviceClockCreateFromAudioDeviceID(kCFAllocatorDefault, device_id, &mut clock);
             if status == 0 {
                 Ok(TCFType::wrap_under_create_rule(clock))
@@ -76,7 +76,7 @@ impl CMClock {
 
     pub fn get_audio_device(&self) -> Result<(CFString, AudioDeviceID, Boolean), OSStatus> {
         unsafe {
-            let mut device_uid = null_mut() as CFStringRef;
+            let mut device_uid = null();
             let mut device_id = 0;
             let mut tracking_default_device = 0;
             let status = CMAudioDeviceClockGetAudioDevice(self.as_concrete_TypeRef(), &mut device_uid, &mut device_id, &mut tracking_default_device);

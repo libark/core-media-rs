@@ -47,7 +47,7 @@ pub const kCMMediaType_TaggedBufferGroup: CMMediaType = fourcc(b"tbgr");
 #[repr(C)]
 pub struct opaqueCMFormatDescription(c_void);
 
-pub type CMFormatDescriptionRef = *const opaqueCMFormatDescription;
+pub type CMFormatDescriptionRef = *mut opaqueCMFormatDescription;
 
 extern "C" {
     pub fn CMFormatDescriptionCreate(

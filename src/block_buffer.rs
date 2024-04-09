@@ -1,7 +1,4 @@
-use std::{
-    ptr::{null, null_mut},
-    slice::from_raw_parts_mut,
-};
+use std::{ptr::null_mut, slice::from_raw_parts_mut};
 
 use core_foundation::base::{kCFAllocatorDefault, Boolean, CFAllocatorRef, CFTypeID, OSStatus, TCFType};
 use libc::{c_void, size_t};
@@ -27,7 +24,7 @@ pub const kCMBlockBufferPermitEmptyReferenceFlag: CMBlockBufferFlags = 1 << 3;
 #[repr(C)]
 pub struct OpaqueCMBlockBuffer(c_void);
 
-pub type CMBlockBufferRef = *const OpaqueCMBlockBuffer;
+pub type CMBlockBufferRef = *mut OpaqueCMBlockBuffer;
 
 #[repr(C, align(4))]
 pub struct CMBlockBufferCustomBlockSource {
@@ -140,7 +137,7 @@ impl_CFTypeDescription!(CMBlockBuffer);
 impl CMBlockBuffer {
     pub fn new_empty(sub_block_capacity: size_t, flags: CMBlockBufferFlags) -> Result<CMBlockBuffer, OSStatus> {
         unsafe {
-            let mut block_buffer = null();
+            let mut block_buffer: CMBlockBufferRef = null_mut();
             let status = CMBlockBufferCreateEmpty(kCFAllocatorDefault, sub_block_capacity, flags, &mut block_buffer);
             if status == kCMBlockBufferNoErr {
                 Ok(TCFType::wrap_under_create_rule(block_buffer))
@@ -158,7 +155,7 @@ impl CMBlockBuffer {
         flags: CMBlockBufferFlags,
     ) -> Result<CMBlockBuffer, OSStatus> {
         unsafe {
-            let mut block_buffer = null();
+            let mut block_buffer: CMBlockBufferRef = null_mut();
             let status = CMBlockBufferCreateWithMemoryBlock(
                 kCFAllocatorDefault,
                 memory_block.as_ptr() as *const c_void,
@@ -185,7 +182,7 @@ impl CMBlockBuffer {
         flags: CMBlockBufferFlags,
     ) -> Result<CMBlockBuffer, OSStatus> {
         unsafe {
-            let mut block_buffer = null();
+            let mut block_buffer: CMBlockBufferRef = null_mut();
             let status = CMBlockBufferCreateWithBufferReference(
                 kCFAllocatorDefault,
                 self.as_concrete_TypeRef(),
@@ -210,7 +207,7 @@ impl CMBlockBuffer {
         flags: CMBlockBufferFlags,
     ) -> Result<CMBlockBuffer, OSStatus> {
         unsafe {
-            let mut block_buffer = null();
+            let mut block_buffer: CMBlockBufferRef = null_mut();
             let status = CMBlockBufferCreateContiguous(
                 kCFAllocatorDefault,
                 self.as_concrete_TypeRef(),

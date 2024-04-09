@@ -146,7 +146,7 @@ impl_CFTypeDescription!(CMTimebase);
 impl CMTimebase {
     pub fn new_with_source_clock(source_clock: &CMClock) -> Result<Self, OSStatus> {
         unsafe {
-            let mut timebase = null_mut();
+            let mut timebase: CMTimebaseRef = null_mut();
             let status = CMTimebaseCreateWithSourceClock(kCFAllocatorDefault, source_clock.0, &mut timebase);
             if status == 0 {
                 Ok(TCFType::wrap_under_create_rule(timebase))
@@ -158,7 +158,7 @@ impl CMTimebase {
 
     pub fn new_with_source_timebase(source_timebase: &CMTimebase) -> Result<Self, OSStatus> {
         unsafe {
-            let mut timebase = null_mut();
+            let mut timebase: CMTimebaseRef = null_mut();
             let status = CMTimebaseCreateWithSourceTimebase(kCFAllocatorDefault, source_timebase.0, &mut timebase);
             if status == 0 {
                 Ok(TCFType::wrap_under_create_rule(timebase))

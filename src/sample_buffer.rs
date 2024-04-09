@@ -41,7 +41,7 @@ pub const kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment: u32 = 1 << 
 #[repr(C)]
 pub struct opaqueCMSampleBuffer(c_void);
 
-pub type CMSampleBufferRef = *const opaqueCMSampleBuffer;
+pub type CMSampleBufferRef = *mut opaqueCMSampleBuffer;
 
 #[repr(C, align(4))]
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -155,7 +155,7 @@ extern "C" {
         sampleTiming: *const CMSampleTimingInfo,
         sampleBufferOut: *mut CMSampleBufferRef,
     ) -> OSStatus;
-    pub fn CMSampleBufferCreateCopy(allocator: *mut CFAllocatorRef, sbuf: CMSampleBufferRef, sampleBufferOut: *mut CMSampleBufferRef) -> OSStatus;
+    pub fn CMSampleBufferCreateCopy(allocator: CFAllocatorRef, sbuf: CMSampleBufferRef, sampleBufferOut: *mut CMSampleBufferRef) -> OSStatus;
     pub fn CMSampleBufferCreateCopyWithNewTiming(
         allocator: CFAllocatorRef,
         originalSBuf: CMSampleBufferRef,
@@ -344,15 +344,15 @@ impl CMSampleBuffer {
         sample_timing_array: Option<&[CMSampleTimingInfo]>,
         sample_size_array: Option<&[size_t]>,
     ) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe {
             CMSampleBufferCreate(
                 kCFAllocatorDefault,
-                data_buffer.map_or(null(), |b| b.as_concrete_TypeRef()),
+                data_buffer.map_or(null_mut(), |b| b.as_concrete_TypeRef()),
                 data_ready as Boolean,
                 make_data_ready_callback,
                 make_data_ready_refcon,
-                format_description.map_or(null(), |f| f.as_concrete_TypeRef()),
+                format_description.map_or(null_mut(), |f| f.as_concrete_TypeRef()),
                 num_samples,
                 sample_timing_array.map_or(0, |a| a.len() as CMItemCount),
                 sample_timing_array.map_or(null(), |a| a.as_ptr()),
@@ -380,7 +380,7 @@ impl CMSampleBuffer {
     where
         F: Fn(CMSampleBuffer) -> OSStatus + 'static,
     {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let handler = make_data_ready_closure.map(|closure| {
             ConcreteBlock::new(move |sbuf: CMSampleBufferRef| -> OSStatus {
                 let sbuf = unsafe { CMSampleBuffer::wrap_under_get_rule(sbuf) };
@@ -391,9 +391,9 @@ impl CMSampleBuffer {
         let status = unsafe {
             CMSampleBufferCreateWithMakeDataReadyHandler(
                 kCFAllocatorDefault,
-                data_buffer.map_or(null(), |b| b.as_concrete_TypeRef()),
+                data_buffer.map_or(null_mut(), |b| b.as_concrete_TypeRef()),
                 data_ready as Boolean,
-                format_description.map_or(null(), |f| f.as_concrete_TypeRef()),
+                format_description.map_or(null_mut(), |f| f.as_concrete_TypeRef()),
                 num_samples,
                 sample_timing_array.map_or(0, |a| a.len() as CMItemCount),
                 sample_timing_array.map_or(null(), |a| a.as_ptr()),
@@ -417,12 +417,12 @@ impl CMSampleBuffer {
         sample_timing_array: Option<&[CMSampleTimingInfo]>,
         sample_size_array: Option<&[size_t]>,
     ) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe {
             CMSampleBufferCreateReady(
                 kCFAllocatorDefault,
                 data_buffer.as_concrete_TypeRef(),
-                format_description.map_or(null(), |f| f.as_concrete_TypeRef()),
+                format_description.map_or(null_mut(), |f| f.as_concrete_TypeRef()),
                 num_samples,
                 sample_timing_array.map_or(0, |a| a.len() as CMItemCount),
                 sample_timing_array.map_or(null(), |a| a.as_ptr()),
@@ -448,11 +448,11 @@ impl CMSampleBuffer {
         presentation_time_stamp: CMTime,
         packet_descriptions: Option<&[AudioStreamPacketDescription]>,
     ) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe {
             CMAudioSampleBufferCreateWithPacketDescriptions(
                 kCFAllocatorDefault,
-                data_buffer.map_or(null(), |b| b.as_concrete_TypeRef()),
+                data_buffer.map_or(null_mut(), |b| b.as_concrete_TypeRef()),
                 data_ready as Boolean,
                 make_data_ready_callback,
                 make_data_ready_refcon,
@@ -482,7 +482,7 @@ impl CMSampleBuffer {
     where
         F: Fn(CMSampleBuffer) -> OSStatus + 'static,
     {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let handler = make_data_ready_closure.map(|closure| {
             ConcreteBlock::new(move |sbuf: CMSampleBufferRef| -> OSStatus {
                 let sbuf = unsafe { CMSampleBuffer::wrap_under_get_rule(sbuf) };
@@ -493,7 +493,7 @@ impl CMSampleBuffer {
         let status = unsafe {
             CMAudioSampleBufferCreateWithPacketDescriptionsAndMakeDataReadyHandler(
                 kCFAllocatorDefault,
-                data_buffer.map_or(null(), |b| b.as_concrete_TypeRef()),
+                data_buffer.map_or(null_mut(), |b| b.as_concrete_TypeRef()),
                 data_ready as Boolean,
                 format_description.as_concrete_TypeRef(),
                 num_samples,
@@ -517,7 +517,7 @@ impl CMSampleBuffer {
         presentation_time_stamp: CMTime,
         packet_descriptions: Option<&[AudioStreamPacketDescription]>,
     ) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe {
             CMAudioSampleBufferCreateReadyWithPacketDescriptions(
                 kCFAllocatorDefault,
@@ -544,7 +544,7 @@ impl CMSampleBuffer {
         format_description: &CMVideoFormatDescription,
         sample_timing: &CMSampleTimingInfo,
     ) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = CMSampleBufferCreateForImageBuffer(
             kCFAllocatorDefault,
             image_buffer.as_concrete_TypeRef(),
@@ -572,7 +572,7 @@ impl CMSampleBuffer {
     where
         F: Fn(CMSampleBuffer) -> OSStatus + 'static,
     {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let handler = make_data_ready_closure.map(|closure| {
             ConcreteBlock::new(move |sbuf: CMSampleBufferRef| -> OSStatus {
                 let sbuf = unsafe { CMSampleBuffer::wrap_under_get_rule(sbuf) };
@@ -603,7 +603,7 @@ impl CMSampleBuffer {
         format_description: &CMVideoFormatDescription,
         sample_timing: &CMSampleTimingInfo,
     ) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe {
             CMSampleBufferCreateReadyWithImageBuffer(
                 kCFAllocatorDefault,
@@ -621,8 +621,8 @@ impl CMSampleBuffer {
     }
 
     pub fn copy(&self) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
-        let status = unsafe { CMSampleBufferCreateCopy(null_mut(), self.as_concrete_TypeRef(), &mut sample_buffer) };
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
+        let status = unsafe { CMSampleBufferCreateCopy(kCFAllocatorDefault, self.as_concrete_TypeRef(), &mut sample_buffer) };
         if status == 0 {
             Ok(unsafe { CMSampleBuffer::wrap_under_create_rule(sample_buffer) })
         } else {
@@ -631,7 +631,7 @@ impl CMSampleBuffer {
     }
 
     pub fn copy_with_new_timing(&self, sample_timing_array: Option<&[CMSampleTimingInfo]>) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe {
             CMSampleBufferCreateCopyWithNewTiming(
                 kCFAllocatorDefault,
@@ -649,7 +649,7 @@ impl CMSampleBuffer {
     }
 
     pub fn copy_for_range(&self, sample_range: CFRange) -> Result<CMSampleBuffer, OSStatus> {
-        let mut sample_buffer = null();
+        let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status =
             unsafe { CMSampleBufferCopySampleBufferForRange(kCFAllocatorDefault, self.as_concrete_TypeRef(), sample_range, &mut sample_buffer) };
         if status == 0 {

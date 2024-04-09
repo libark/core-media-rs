@@ -1,4 +1,7 @@
-use std::{mem, ptr::null};
+use std::{
+    mem,
+    ptr::{null, null_mut},
+};
 
 use block::Block;
 use core_foundation::{
@@ -23,7 +26,7 @@ pub const kCMBufferQueueError_InvalidBuffer: OSStatus = -12769;
 #[repr(C)]
 pub struct OpaqueCMBufferQueue(c_void);
 
-pub type CMBufferQueueRef = *const OpaqueCMBufferQueue;
+pub type CMBufferQueueRef = *mut OpaqueCMBufferQueue;
 
 pub type CMBufferRef = CFTypeRef;
 
@@ -204,7 +207,7 @@ impl_CFTypeDescription!(CMBufferQueue);
 impl CMBufferQueue {
     pub fn new(callbacks: &[CMBufferCallbacks]) -> Result<CMBufferQueue, OSStatus> {
         unsafe {
-            let mut queue = null();
+            let mut queue: CMBufferQueueRef = null_mut();
             let status = CMBufferQueueCreate(kCFAllocatorDefault, callbacks.len() as CMItemCount, callbacks.as_ptr(), &mut queue);
             if status == 0 {
                 Ok(TCFType::wrap_under_create_rule(queue))
