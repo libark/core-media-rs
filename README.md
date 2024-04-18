@@ -1,2 +1,2 @@
 # core-media
-Rust bindings to CoreMedia framework
+Rust safe bindings to CoreMedia framework

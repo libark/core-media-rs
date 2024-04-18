@@ -1,9 +1,10 @@
 [package]
 name = "core-media"
-description = "Bindings to CoreMedia framework"
+description = "Safe bindings to CoreMedia framework"
 homepage = "https://github.com/libark/core-media"
 repository = "https://github.com/libark/core-media"
-version = "0.1.9"
+documentation = "https://docs.rs/core-media"
+version = "0.1.10"
 authors = ["Zhou Wei <zhouwei@ehom.net>"]
 license = "MIT OR Apache-2.0"
 categories = ["multimedia", "os::macos-apis"]

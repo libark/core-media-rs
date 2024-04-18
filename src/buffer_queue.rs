@@ -3,7 +3,7 @@ use std::{
     ptr::{null, null_mut},
 };
 
-use block::Block;
+use block::{Block, ConcreteBlock};
 use core_foundation::{
     base::{kCFAllocatorDefault, Boolean, CFAllocatorRef, CFComparisonResult, CFGetTypeID, CFRetain, CFType, CFTypeID, CFTypeRef, OSStatus, TCFType},
     string::CFStringRef,
@@ -129,6 +129,20 @@ extern "C" {
         threshold: CMItemCount,
         triggerTokenOut: *mut CMBufferQueueTriggerToken,
     ) -> OSStatus;
+    pub fn CMBufferQueueInstallTriggerHandler(
+        queue: CMBufferQueueRef,
+        condition: CMBufferQueueTriggerCondition,
+        time: CMTime,
+        triggerTokenOut: *mut CMBufferQueueTriggerToken,
+        handler: CMBufferQueueTriggerHandler,
+    ) -> OSStatus;
+    pub fn CMBufferQueueInstallTriggerHandlerWithIntegerThreshold(
+        queue: CMBufferQueueRef,
+        condition: CMBufferQueueTriggerCondition,
+        threshold: CMItemCount,
+        triggerTokenOut: *mut CMBufferQueueTriggerToken,
+        handler: CMBufferQueueTriggerHandler,
+    ) -> OSStatus;
     pub fn CMBufferQueueRemoveTrigger(queue: CMBufferQueueRef, triggerToken: CMBufferQueueTriggerToken) -> OSStatus;
     pub fn CMBufferQueueTestTrigger(queue: CMBufferQueueRef, triggerToken: CMBufferQueueTriggerToken) -> Boolean;
     pub fn CMBufferQueueCallForEachBuffer(
@@ -143,6 +157,7 @@ pub type CMBufferValidationHandler = *const Block<(CMBufferQueueRef, CMBufferRef
 
 extern "C" {
     pub fn CMBufferQueueSetValidationCallback(queue: CMBufferQueueRef, callback: CMBufferValidationCallback, refCon: *mut c_void) -> OSStatus;
+    pub fn CMBufferQueueSetValidationHandler(queue: CMBufferQueueRef, handler: CMBufferValidationHandler) -> OSStatus;
 }
 
 declare_TCFType! {
@@ -394,6 +409,64 @@ impl CMBufferQueue {
         }
     }
 
+    pub fn install_trigger_closure<F>(
+        &self,
+        condition: CMBufferQueueTriggerCondition,
+        time: CMTime,
+        closure: Option<F>,
+    ) -> Result<CMBufferQueueTriggerToken, OSStatus>
+    where
+        F: Fn(CMBufferQueueTriggerToken) + 'static,
+    {
+        let mut token = null();
+        let handler = closure.map(|closure| {
+            ConcreteBlock::new(move |trigger_token: CMBufferQueueTriggerToken| {
+                closure(trigger_token);
+            })
+            .copy()
+        });
+        let status = unsafe {
+            CMBufferQueueInstallTriggerHandler(self.as_concrete_TypeRef(), condition, time, &mut token, handler.as_ref().map_or(null(), |h| &**h))
+        };
+        if status == 0 {
+            Ok(token)
+        } else {
+            Err(status)
+        }
+    }
+
+    pub fn install_trigger_with_integer_threshold_closure<F>(
+        &self,
+        condition: CMBufferQueueTriggerCondition,
+        threshold: CMItemCount,
+        closure: Option<F>,
+    ) -> Result<CMBufferQueueTriggerToken, OSStatus>
+    where
+        F: Fn(CMBufferQueueTriggerToken) + 'static,
+    {
+        let mut token = null();
+        let handler = closure.map(|closure| {
+            ConcreteBlock::new(move |trigger_token: CMBufferQueueTriggerToken| {
+                closure(trigger_token);
+            })
+            .copy()
+        });
+        let status = unsafe {
+            CMBufferQueueInstallTriggerHandlerWithIntegerThreshold(
+                self.as_concrete_TypeRef(),
+                condition,
+                threshold,
+                &mut token,
+                handler.as_ref().map_or(null(), |h| &**h),
+            )
+        };
+        if status == 0 {
+            Ok(token)
+        } else {
+            Err(status)
+        }
+    }
+
     pub fn remove_trigger(&self, token: CMBufferQueueTriggerToken) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBufferQueueRemoveTrigger(self.as_concrete_TypeRef(), token);
@@ -432,6 +505,27 @@ impl CMBufferQueue {
             } else {
                 Err(status)
             }
+        }
+    }
+
+    pub fn set_validation_closure<F>(&self, closure: Option<F>) -> Result<(), OSStatus>
+    where
+        F: Fn(CMBufferQueue, CMBuffer) -> OSStatus + 'static,
+    {
+        let handler = closure.map(|closure| {
+            ConcreteBlock::new(move |queue: CMBufferQueueRef, buf: CMBufferRef| {
+                let queue = unsafe { CMBufferQueue::wrap_under_get_rule(queue) };
+                let buf = unsafe { CMBuffer::wrap_under_get_rule(buf) };
+                closure(queue, buf)
+            })
+            .copy()
+        });
+
+        let status = unsafe { CMBufferQueueSetValidationHandler(self.as_concrete_TypeRef(), handler.as_ref().map_or(null(), |h| &**h)) };
+        if status == 0 {
+            Ok(())
+        } else {
+            Err(status)
         }
     }
 }
