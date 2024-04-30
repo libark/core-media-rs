@@ -4,6 +4,8 @@ use core_foundation::{
     number::CFNumber,
     string::{CFString, CFStringRef},
 };
+#[cfg(feature = "objc")]
+use objc2::encode::{Encode, Encoding};
 
 pub type CMTimeValue = i64;
 pub type CMTimeScale = i32;
@@ -70,6 +72,12 @@ extern "C" {
 
     pub fn CMTimeCopyDescription(allocator: CFAllocatorRef, time: CMTime) -> CFStringRef;
     pub fn CMTimeShow(time: CMTime);
+}
+
+#[cfg(feature = "objc")]
+unsafe impl Encode for CMTime {
+    const ENCODING: Encoding =
+        Encoding::Struct("?", &[CMTimeValue::ENCODING, CMTimeScale::ENCODING, CMTimeFlags::ENCODING, CMTimeEpoch::ENCODING]);
 }
 
 impl CMTime {

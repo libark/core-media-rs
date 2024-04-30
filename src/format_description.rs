@@ -18,6 +18,8 @@ use core_graphics_types::{
 };
 use core_video::image_buffer::{CVImageBuffer, CVImageBufferRef};
 use libc::{c_int, c_void, size_t};
+#[cfg(feature = "objc")]
+use objc2::encode::{Encoding, RefEncode};
 
 use crate::{time::CMTime, OSType};
 
@@ -587,6 +589,11 @@ extern "C" {
     ) -> OSStatus;
     pub fn CMMetadataFormatDescriptionGetKeyWithLocalID(desc: CMMetadataFormatDescriptionRef, localKeyID: OSType) -> CFDictionaryRef;
     pub fn CMMetadataFormatDescriptionGetIdentifiers(desc: CMMetadataFormatDescriptionRef) -> CFArrayRef;
+}
+
+#[cfg(feature = "objc")]
+unsafe impl RefEncode for opaqueCMFormatDescription {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Encoding::Struct("opaqueCMFormatDescription", &[]));
 }
 
 declare_TCFType! {

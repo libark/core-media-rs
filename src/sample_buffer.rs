@@ -10,6 +10,8 @@ use core_foundation::{
 };
 use core_video::image_buffer::{CVImageBuffer, CVImageBufferRef};
 use libc::{c_void, size_t};
+#[cfg(feature = "objc")]
+use objc2::encode::{Encoding, RefEncode};
 
 use crate::{
     base::CMItemCount,
@@ -326,6 +328,11 @@ extern "C" {
     ) -> OSStatus;
     pub fn CMSampleBufferCallBlockForEachSample(sbuf: CMSampleBufferRef, block: *const Block<(CMSampleBufferRef, CMItemCount), OSStatus>)
     -> OSStatus;
+}
+
+#[cfg(feature = "objc")]
+unsafe impl RefEncode for opaqueCMSampleBuffer {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Encoding::Struct("opaqueCMSampleBuffer", &[]));
 }
 
 declare_TCFType! {

@@ -9,6 +9,8 @@ extern crate core_foundation;
 extern crate core_graphics_types;
 extern crate core_video;
 extern crate libc;
+#[cfg(feature = "objc")]
+extern crate objc2;
 
 pub type OSType = u32;
 
