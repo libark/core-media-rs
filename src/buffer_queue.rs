@@ -40,7 +40,7 @@ pub type CMBufferGetSizeCallback = extern "C" fn(buf: CMBufferRef, refcon: *mut 
 pub type CMBufferGetSizeHandler = *const Block<CMBufferRef, size_t>;
 
 #[repr(C, align(4))]
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct CMBufferCallbacks {
     pub version: u32,
     pub refcon: *mut c_void,
