@@ -9,7 +9,7 @@ extern "C" {
 }
 
 impl CMClock {
-    pub fn new_auido_clock() -> Result<CMClock, OSStatus> {
+    pub fn new_audio_clock() -> Result<CMClock, OSStatus> {
         unsafe {
             let mut clock = null_mut();
             let status = CMAudioClockCreate(kCFAllocatorDefault, &mut clock);
