@@ -339,6 +339,7 @@ declare_TCFType! {
     CMSampleBuffer, CMSampleBufferRef
 }
 impl_TCFType!(CMSampleBuffer, CMSampleBufferRef, CMSampleBufferGetTypeID);
+impl_CFTypeDescription!(CMSampleBuffer);
 
 impl CMSampleBuffer {
     pub unsafe fn new(
