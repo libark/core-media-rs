@@ -12,7 +12,7 @@ use core_foundation::{
     propertylist::{CFPropertyList, CFPropertyListRef},
     string::{CFString, CFStringRef},
 };
-use core_graphics_types::{
+use core_graphics::{
     base::CGFloat,
     geometry::{CGRect, CGSize},
 };
