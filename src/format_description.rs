@@ -1,5 +1,5 @@
 use std::{
-    mem::size_of_val,
+    mem::{forget, size_of_val},
     ptr::{null, null_mut},
     slice::from_raw_parts,
 };
@@ -7,7 +7,7 @@ use std::{
 use core_audio_types::base_types::{AudioChannelLayout, AudioFormatListItem, AudioStreamBasicDescription};
 use core_foundation::{
     array::{CFArray, CFArrayRef},
-    base::{kCFAllocatorDefault, Boolean, CFAllocatorRef, CFType, CFTypeID, CFTypeRef, OSStatus, TCFType},
+    base::{kCFAllocatorDefault, Boolean, CFAllocatorRef, CFType, CFTypeID, CFTypeRef, OSStatus, TCFType, TCFTypeRef},
     dictionary::{CFDictionary, CFDictionaryRef},
     propertylist::{CFPropertyList, CFPropertyListRef},
     string::{CFString, CFStringRef},
@@ -596,6 +596,47 @@ unsafe impl RefEncode for opaqueCMFormatDescription {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Encoding::Struct("opaqueCMFormatDescription", &[]));
 }
 
+pub trait TCMFormatDescription: TCFType {
+    #[inline]
+    fn as_buffer(&self) -> CMFormatDescription {
+        unsafe { CMFormatDescription::wrap_under_get_rule(self.as_concrete_TypeRef().as_void_ptr() as CMFormatDescriptionRef) }
+    }
+
+    #[inline]
+    fn into_buffer(self) -> CMFormatDescription
+    where
+        Self: Sized,
+    {
+        let reference = self.as_concrete_TypeRef().as_void_ptr() as CMFormatDescriptionRef;
+        forget(self);
+        unsafe { CMFormatDescription::wrap_under_create_rule(reference) }
+    }
+}
+
+impl CMFormatDescription {
+    #[inline]
+    pub fn downcast<T: TCMFormatDescription>(&self) -> Option<T> {
+        if self.instance_of::<T>() {
+            unsafe { Some(T::wrap_under_get_rule(T::Ref::from_void_ptr(self.as_concrete_TypeRef() as *const c_void))) }
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub fn downcast_into<T: TCMFormatDescription>(self) -> Option<T> {
+        if self.instance_of::<T>() {
+            unsafe {
+                let reference = T::Ref::from_void_ptr(self.as_concrete_TypeRef() as *const c_void);
+                forget(self);
+                Some(T::wrap_under_create_rule(reference))
+            }
+        } else {
+            None
+        }
+    }
+}
+
 declare_TCFType! {
     CMFormatDescription, CMFormatDescriptionRef
 }
@@ -678,6 +719,8 @@ impl CMFormatDescription {
         }
     }
 }
+
+impl TCMFormatDescription for CMAudioFormatDescription {}
 
 declare_TCFType! {
     CMAudioFormatDescription, CMAudioFormatDescriptionRef
@@ -813,6 +856,8 @@ impl CMAudioFormatDescription {
         (equal, mask)
     }
 }
+
+impl TCMFormatDescription for CMVideoFormatDescription {}
 
 declare_TCFType! {
     CMVideoFormatDescription, CMVideoFormatDescriptionRef
@@ -975,6 +1020,8 @@ impl CMVideoFormatDescription {
     }
 }
 
+impl TCMFormatDescription for CMMuxedFormatDescription {}
+
 declare_TCFType! {
     CMMuxedFormatDescription, CMMuxedFormatDescriptionRef
 }
@@ -999,6 +1046,8 @@ impl CMMuxedFormatDescription {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
 }
+
+impl TCMFormatDescription for CMClosedCaptionFormatDescription {}
 
 declare_TCFType! {
     CMClosedCaptionFormatDescription, CMClosedCaptionFormatDescriptionRef
@@ -1031,6 +1080,8 @@ impl CMClosedCaptionFormatDescription {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
 }
+
+impl TCMFormatDescription for CMTextFormatDescription {}
 
 declare_TCFType! {
     CMTextFormatDescription, CMTextFormatDescriptionRef
@@ -1144,6 +1195,8 @@ impl CMTextFormatDescription {
     }
 }
 
+impl TCMFormatDescription for CMTimeCodeFormatDescription {}
+
 declare_TCFType! {
     CMTimeCodeFormatDescription, CMTimeCodeFormatDescriptionRef
 }
@@ -1198,6 +1251,8 @@ impl CMTimeCodeFormatDescription {
         unsafe { CMTimeCodeFormatDescriptionGetTimeCodeFlags(self.as_concrete_TypeRef()) }
     }
 }
+
+impl TCMFormatDescription for CMMetadataFormatDescription {}
 
 declare_TCFType! {
     CMMetadataFormatDescription, CMMetadataFormatDescriptionRef
