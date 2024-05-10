@@ -9,6 +9,7 @@ extern "C" {
 }
 
 impl CMClock {
+    #[inline]
     pub fn new_audio_clock() -> Result<CMClock, OSStatus> {
         unsafe {
             let mut clock = null_mut();

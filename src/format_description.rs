@@ -603,6 +603,7 @@ impl_TCFType!(CMFormatDescription, CMFormatDescriptionRef, CMFormatDescriptionGe
 impl_CFTypeDescription!(CMFormatDescription);
 
 impl CMFormatDescription {
+    #[inline]
     pub fn new(media_type: CMMediaType, media_subtype: FourCharCode, extensions: Option<&CFDictionary<CFString, CFType>>) -> Result<Self, OSStatus> {
         let mut format_description: CMFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -621,10 +622,12 @@ impl CMFormatDescription {
         }
     }
 
+    #[inline]
     pub fn equal(&self, other: &Self) -> bool {
         unsafe { CMFormatDescriptionEqual(self.as_concrete_TypeRef(), other.as_concrete_TypeRef()) != 0 }
     }
 
+    #[inline]
     pub fn equal_ignoring_extension_keys(
         &self,
         other: &Self,
@@ -641,14 +644,17 @@ impl CMFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_media_type(&self) -> CMMediaType {
         unsafe { CMFormatDescriptionGetMediaType(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_media_subtype(&self) -> FourCharCode {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_extensions(&self) -> Option<CFDictionary<CFString, CFType>> {
         unsafe {
             let extensions = CMFormatDescriptionGetExtensions(self.as_concrete_TypeRef());
@@ -660,6 +666,7 @@ impl CMFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_extension(&self, extension_key: &CFString) -> Option<CFPropertyList> {
         unsafe {
             let extension = CMFormatDescriptionGetExtension(self.as_concrete_TypeRef(), extension_key.as_concrete_TypeRef());
@@ -679,6 +686,7 @@ impl_TCFType!(CMAudioFormatDescription, CMAudioFormatDescriptionRef, CMFormatDes
 impl_CFTypeDescription!(CMAudioFormatDescription);
 
 impl CMAudioFormatDescription {
+    #[inline]
     pub fn new(
         asbd: &AudioStreamBasicDescription,
         layout: &AudioChannelLayout,
@@ -705,10 +713,12 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_codec_type(&self) -> CMAudioCodecType {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_stream_basic_description(&self) -> Option<&AudioStreamBasicDescription> {
         unsafe {
             let asbd = CMAudioFormatDescriptionGetStreamBasicDescription(self.as_concrete_TypeRef());
@@ -720,6 +730,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_magic_cookie(&self) -> Option<&[u8]> {
         unsafe {
             let mut size = 0;
@@ -732,6 +743,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_channel_layout(&self) -> Option<(&AudioChannelLayout, usize)> {
         unsafe {
             let mut size = 0;
@@ -744,6 +756,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_format_list(&self) -> Option<&[AudioFormatListItem]> {
         unsafe {
             let mut size = 0;
@@ -756,6 +769,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_richest_decodable_format(&self) -> Option<&AudioFormatListItem> {
         unsafe {
             let format = CMAudioFormatDescriptionGetRichestDecodableFormat(self.as_concrete_TypeRef());
@@ -767,6 +781,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_most_compatible_format(&self) -> Option<&AudioFormatListItem> {
         unsafe {
             let format = CMAudioFormatDescriptionGetMostCompatibleFormat(self.as_concrete_TypeRef());
@@ -778,6 +793,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn new_summary(format_description_array: &CFArray<CMAudioFormatDescription>, flags: u32) -> Result<Self, OSStatus> {
         let mut format_description: CMAudioFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -790,6 +806,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn equal(&self, other: &Self, eequality_mask: CMAudioFormatDescriptionMask) -> (bool, CMAudioFormatDescriptionMask) {
         let mut mask = 0;
         let equal = unsafe { CMAudioFormatDescriptionEqual(self.as_concrete_TypeRef(), other.as_concrete_TypeRef(), eequality_mask, &mut mask) != 0 };
@@ -804,6 +821,7 @@ impl_TCFType!(CMVideoFormatDescription, CMVideoFormatDescriptionRef, CMFormatDes
 impl_CFTypeDescription!(CMVideoFormatDescription);
 
 impl CMVideoFormatDescription {
+    #[inline]
     pub fn new(codec_type: CMVideoCodecType, width: i32, height: i32, extensions: Option<&CFDictionary<CFString, CFType>>) -> Result<Self, OSStatus> {
         let mut format_description: CMVideoFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -823,6 +841,7 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn from_image_buffer(image_buffer: &CVImageBuffer) -> Result<Self, OSStatus> {
         let mut format_description: CMVideoFormatDescriptionRef = null_mut();
         let status =
@@ -834,6 +853,7 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn from_h264_parameter_sets(parameter_sets: &[&[u8]], nal_unit_header_length: i32) -> Result<Self, OSStatus> {
         let mut format_description: CMVideoFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -853,6 +873,7 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn from_hevc_parameter_sets(
         parameter_sets: &[&[u8]],
         nal_unit_header_length: i32,
@@ -877,6 +898,7 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_h264_parameter_set_at_index(&self, parameter_set_index: usize) -> Result<(&[u8], usize, i32), OSStatus> {
         let mut parameter_set_pointer = null();
         let mut parameter_set_size = 0;
@@ -899,6 +921,7 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_hevc_parameter_set_at_index(&self, parameter_set_index: usize) -> Result<(&[u8], usize, i32), OSStatus> {
         let mut parameter_set_pointer = null();
         let mut parameter_set_size = 0;
@@ -921,26 +944,32 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_codec_type(&self) -> CMVideoCodecType {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_dimensions(&self) -> CMVideoDimensions {
         unsafe { CMVideoFormatDescriptionGetDimensions(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_presentation_dimensions(&self, use_pixel_aspect_ratio: bool, use_clean_aperture: bool) -> CGSize {
         unsafe { CMVideoFormatDescriptionGetPresentationDimensions(self.as_concrete_TypeRef(), use_pixel_aspect_ratio as _, use_clean_aperture as _) }
     }
 
+    #[inline]
     pub fn get_clean_aperture(&self, origin_is_at_top_left: bool) -> CGRect {
         unsafe { CMVideoFormatDescriptionGetCleanAperture(self.as_concrete_TypeRef(), origin_is_at_top_left as _) }
     }
 
+    #[inline]
     pub fn get_extension_keys_common_with_image_buffers() -> CFArray<CFString> {
         unsafe { TCFType::wrap_under_create_rule(CMVideoFormatDescriptionGetExtensionKeysCommonWithImageBuffers()) }
     }
 
+    #[inline]
     pub fn matches_image_buffer(&self, image_buffer: &CVImageBuffer) -> bool {
         unsafe { CMVideoFormatDescriptionMatchesImageBuffer(self.as_concrete_TypeRef(), image_buffer.as_concrete_TypeRef()) != 0 }
     }
@@ -953,6 +982,7 @@ impl_TCFType!(CMMuxedFormatDescription, CMMuxedFormatDescriptionRef, CMFormatDes
 impl_CFTypeDescription!(CMMuxedFormatDescription);
 
 impl CMMuxedFormatDescription {
+    #[inline]
     pub fn new(mux_type: CMMuxedStreamType, extensions: &CFDictionary<CFString, CFType>) -> Result<Self, OSStatus> {
         let mut format_description: CMMuxedFormatDescriptionRef = null_mut();
         let status =
@@ -964,6 +994,7 @@ impl CMMuxedFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_stream_type(&self) -> CMMuxedStreamType {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
@@ -976,6 +1007,7 @@ impl_TCFType!(CMClosedCaptionFormatDescription, CMClosedCaptionFormatDescription
 impl_CFTypeDescription!(CMClosedCaptionFormatDescription);
 
 impl CMClosedCaptionFormatDescription {
+    #[inline]
     pub fn new(format_type: CMClosedCaptionFormatType, extensions: Option<&CFDictionary<CFString, CFType>>) -> Result<Self, OSStatus> {
         let mut format_description: CMClosedCaptionFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -994,6 +1026,7 @@ impl CMClosedCaptionFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_format_type(&self) -> CMClosedCaptionFormatType {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
@@ -1006,6 +1039,7 @@ impl_TCFType!(CMTextFormatDescription, CMTextFormatDescriptionRef, CMFormatDescr
 impl_CFTypeDescription!(CMTextFormatDescription);
 
 impl CMTextFormatDescription {
+    #[inline]
     pub fn new(format_type: CMTextFormatType, extensions: Option<&CFDictionary<CFString, CFType>>) -> Result<Self, OSStatus> {
         let mut format_description: CMTextFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -1024,10 +1058,12 @@ impl CMTextFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_format_type(&self) -> CMTextFormatType {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_display_flags(&self) -> Result<CMTextDisplayFlags, OSStatus> {
         let mut display_flags = 0;
         let status = unsafe { CMTextFormatDescriptionGetDisplayFlags(self.as_concrete_TypeRef(), &mut display_flags) };
@@ -1038,6 +1074,7 @@ impl CMTextFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_justification(&self) -> Result<(CMTextJustificationValue, CMTextJustificationValue), OSStatus> {
         let mut horizontal_justification = 0;
         let mut vertical_justification = 0;
@@ -1051,6 +1088,7 @@ impl CMTextFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_default_text_box(&self, origin_is_at_top_left: bool, height_of_text_track: CGFloat) -> Result<CGRect, OSStatus> {
         let mut default_text_box = CGRect::default();
         let status = unsafe {
@@ -1068,6 +1106,7 @@ impl CMTextFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_default_style(&self) -> Result<(u16, bool, bool, bool, CGFloat, [CGFloat; 4]), OSStatus> {
         let mut local_font_id = 0;
         let mut bold: Boolean = 0;
@@ -1093,6 +1132,7 @@ impl CMTextFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_font_name(&self, local_font_id: u16) -> Result<CFString, OSStatus> {
         let mut font_name = null();
         let status = unsafe { CMTextFormatDescriptionGetFontName(self.as_concrete_TypeRef(), local_font_id, &mut font_name) };
@@ -1111,6 +1151,7 @@ impl_TCFType!(CMTimeCodeFormatDescription, CMTimeCodeFormatDescriptionRef, CMFor
 impl_CFTypeDescription!(CMTimeCodeFormatDescription);
 
 impl CMTimeCodeFormatDescription {
+    #[inline]
     pub fn new(
         time_code_format_type: CMTimeCodeFormatType,
         frame_duration: CMTime,
@@ -1137,18 +1178,22 @@ impl CMTimeCodeFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_format_type(&self) -> CMTimeCodeFormatType {
         unsafe { CMFormatDescriptionGetMediaSubType(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_frame_duration(&self) -> CMTime {
         unsafe { CMTimeCodeFormatDescriptionGetFrameDuration(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_frame_quanta(&self) -> u32 {
         unsafe { CMTimeCodeFormatDescriptionGetFrameQuanta(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_time_code_flags(&self) -> u32 {
         unsafe { CMTimeCodeFormatDescriptionGetTimeCodeFlags(self.as_concrete_TypeRef()) }
     }
@@ -1161,6 +1206,7 @@ impl_TCFType!(CMMetadataFormatDescription, CMMetadataFormatDescriptionRef, CMFor
 impl_CFTypeDescription!(CMMetadataFormatDescription);
 
 impl CMMetadataFormatDescription {
+    #[inline]
     pub fn new_with_keys(metadata_type: CMMetadataFormatType, keys: Option<&CFArray<CFString>>) -> Result<Self, OSStatus> {
         let mut format_description: CMMetadataFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -1178,6 +1224,7 @@ impl CMMetadataFormatDescription {
         }
     }
 
+    #[inline]
     pub fn new_with_metadata_specifications(
         metadata_type: CMMetadataFormatType,
         metadata_specifications: &CFArray<CFDictionary<CFString, CFType>>,
@@ -1198,6 +1245,7 @@ impl CMMetadataFormatDescription {
         }
     }
 
+    #[inline]
     pub fn new_with_metadata_format_description_and_metadata_specifications(
         source_description: &CMMetadataFormatDescription,
         metadata_specifications: &CFArray<CFDictionary<CFString, CFType>>,
@@ -1218,6 +1266,7 @@ impl CMMetadataFormatDescription {
         }
     }
 
+    #[inline]
     pub fn new_by_merging_metadata_format_descriptions(
         source_description: &CMMetadataFormatDescription,
         other_source_description: &CMMetadataFormatDescription,
@@ -1238,6 +1287,7 @@ impl CMMetadataFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_key_with_local_id(&self, local_key_id: OSType) -> Option<CFDictionary<CFString, CFType>> {
         unsafe {
             let key = CMMetadataFormatDescriptionGetKeyWithLocalID(self.as_concrete_TypeRef(), local_key_id);
@@ -1249,6 +1299,7 @@ impl CMMetadataFormatDescription {
         }
     }
 
+    #[inline]
     pub fn get_identifiers(&self) -> Option<CFArray<CFString>> {
         unsafe {
             let identifiers = CMMetadataFormatDescriptionGetIdentifiers(self.as_concrete_TypeRef());

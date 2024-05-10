@@ -220,6 +220,7 @@ impl_TCFType!(CMBufferQueue, CMBufferQueueRef, CMBufferQueueGetTypeID);
 impl_CFTypeDescription!(CMBufferQueue);
 
 impl CMBufferQueue {
+    #[inline]
     pub fn new(callbacks: &[CMBufferCallbacks]) -> Result<CMBufferQueue, OSStatus> {
         unsafe {
             let mut queue: CMBufferQueueRef = null_mut();
@@ -232,6 +233,7 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn enqueue(&self, buf: &CMBuffer) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBufferQueueEnqueue(self.as_concrete_TypeRef(), buf.as_concrete_TypeRef());
@@ -243,6 +245,7 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn dequeue_and_retain(&self) -> Option<CMBuffer> {
         unsafe {
             let buf = CMBufferQueueDequeueAndRetain(self.as_concrete_TypeRef());
@@ -254,6 +257,7 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn dequeue_if_data_ready_and_retain(&self) -> Option<CMBuffer> {
         unsafe {
             let buf = CMBufferQueueDequeueIfDataReadyAndRetain(self.as_concrete_TypeRef());
@@ -265,6 +269,7 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn get_head(&self) -> Option<CMBuffer> {
         unsafe {
             let buf = CMBufferQueueGetHead(self.as_concrete_TypeRef());
@@ -276,6 +281,7 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn copy_head(&self) -> Option<CMBuffer> {
         unsafe {
             let buf = CMBufferQueueCopyHead(self.as_concrete_TypeRef());
@@ -287,10 +293,12 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
         unsafe { CMBufferQueueIsEmpty(self.as_concrete_TypeRef()) != 0 }
     }
 
+    #[inline]
     pub fn mark_end_of_data(&self) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBufferQueueMarkEndOfData(self.as_concrete_TypeRef());
@@ -302,14 +310,17 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn contains_end_of_data(&self) -> bool {
         unsafe { CMBufferQueueContainsEndOfData(self.as_concrete_TypeRef()) != 0 }
     }
 
+    #[inline]
     pub fn is_at_end_of_data(&self) -> bool {
         unsafe { CMBufferQueueIsAtEndOfData(self.as_concrete_TypeRef()) != 0 }
     }
 
+    #[inline]
     pub fn reset(&self) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBufferQueueReset(self.as_concrete_TypeRef());
@@ -321,6 +332,7 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub unsafe fn reset_with_callback(
         &self,
         callback: extern "C" fn(buffer: CMBufferRef, refcon: *mut c_void),
@@ -336,38 +348,47 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn get_buffer_count(&self) -> CMItemCount {
         unsafe { CMBufferQueueGetBufferCount(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_duration(&self) -> CMTime {
         unsafe { CMBufferQueueGetDuration(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_min_decode_time_stamp(&self) -> CMTime {
         unsafe { CMBufferQueueGetMinDecodeTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_first_decode_time_stamp(&self) -> CMTime {
         unsafe { CMBufferQueueGetFirstDecodeTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_min_presentation_time_stamp(&self) -> CMTime {
         unsafe { CMBufferQueueGetMinPresentationTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_first_presentation_time_stamp(&self) -> CMTime {
         unsafe { CMBufferQueueGetFirstPresentationTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_max_presentation_time_stamp(&self) -> CMTime {
         unsafe { CMBufferQueueGetMaxPresentationTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_end_presentation_time_stamp(&self) -> CMTime {
         unsafe { CMBufferQueueGetEndPresentationTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_total_size(&self) -> size_t {
         unsafe { CMBufferQueueGetTotalSize(self.as_concrete_TypeRef()) }
     }
@@ -467,6 +488,7 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn remove_trigger(&self, token: CMBufferQueueTriggerToken) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBufferQueueRemoveTrigger(self.as_concrete_TypeRef(), token);
@@ -478,10 +500,12 @@ impl CMBufferQueue {
         }
     }
 
+    #[inline]
     pub fn test_trigger(&self, token: CMBufferQueueTriggerToken) -> bool {
         unsafe { CMBufferQueueTestTrigger(self.as_concrete_TypeRef(), token) != 0 }
     }
 
+    #[inline]
     pub unsafe fn call_for_each_buffer(
         &self,
         callback: extern "C" fn(buffer: CMBufferRef, refcon: *mut c_void) -> OSStatus,

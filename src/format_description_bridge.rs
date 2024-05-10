@@ -206,6 +206,7 @@ extern "C" {
 }
 
 impl CMAudioFormatDescription {
+    #[inline]
     pub fn from_big_endian_sound_description_data(sound_descriptionData: &[u8], flavor: &CFString) -> Result<CMAudioFormatDescription, OSStatus> {
         let mut format_description: CMAudioFormatDescriptionRef = null_mut();
         let status = unsafe {
@@ -224,6 +225,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn from_big_endian_sound_description_block_buffer(
         sound_description_block_buffer: &CMBlockBuffer,
         flavor: &CFString,
@@ -244,6 +246,7 @@ impl CMAudioFormatDescription {
         }
     }
 
+    #[inline]
     pub fn copy_as_big_endian_sound_description_block_buffer(&self, flavor: &CFString) -> Result<CMBlockBuffer, OSStatus> {
         let mut block_buffer: CMBlockBufferRef = null_mut();
         let status = unsafe {
@@ -263,12 +266,14 @@ impl CMAudioFormatDescription {
 }
 
 impl CMBlockBuffer {
+    #[inline]
     pub fn does_big_endian_sound_description_require_legacy_cbr_sample_table_layout(&self, flavor: &CFString) -> bool {
         unsafe { CMDoesBigEndianSoundDescriptionRequireLegacyCBRSampleTableLayout(self.as_concrete_TypeRef(), flavor.as_concrete_TypeRef()) != 0 }
     }
 }
 
 impl CMVideoFormatDescription {
+    #[inline]
     pub fn from_big_endian_image_description_data(
         image_description_data: &[u8],
         string_encoding: CFStringEncoding,
@@ -292,6 +297,7 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn from_big_endian_image_description_block_buffer(
         image_description_block_buffer: &CMBlockBuffer,
         string_encoding: CFStringEncoding,
@@ -314,6 +320,7 @@ impl CMVideoFormatDescription {
         }
     }
 
+    #[inline]
     pub fn copy_as_big_endian_image_description_block_buffer(
         &self,
         string_encoding: CFStringEncoding,

@@ -98,6 +98,7 @@ impl CMAttachmentBearer {
 }
 
 impl Clone for CMAttachmentBearer {
+    #[inline]
     fn clone(&self) -> Self {
         unsafe { CMAttachmentBearer::wrap_under_get_rule(self.as_concrete_TypeRef()) }
     }
@@ -113,6 +114,7 @@ impl PartialEq for CMAttachmentBearer {
 impl Eq for CMAttachmentBearer {}
 
 impl CMAttachmentBearer {
+    #[inline]
     pub fn downcast<T: CMAttachmentBearerSubClass>(&self) -> Option<T> {
         if self.instance_of::<T>() {
             Some(unsafe { T::wrap_under_get_rule(T::Ref::from_void_ptr(self.as_concrete_TypeRef())) })
@@ -121,6 +123,7 @@ impl CMAttachmentBearer {
         }
     }
 
+    #[inline]
     pub fn downcast_into<T: CMAttachmentBearerSubClass>(self) -> Option<T> {
         if self.instance_of::<T>() {
             unsafe {
@@ -135,10 +138,12 @@ impl CMAttachmentBearer {
 }
 
 impl CMAttachmentBearer {
+    #[inline]
     pub fn set_attachment(&self, key: &CFString, value: &CFType, attachment_mode: CMAttachmentMode) {
         unsafe { CMSetAttachment(self.as_concrete_TypeRef(), key.as_concrete_TypeRef(), value.as_CFTypeRef(), attachment_mode) }
     }
 
+    #[inline]
     pub fn get_attachment(&self, key: &CFString) -> Option<(CFType, CMAttachmentMode)> {
         unsafe {
             let mut attachment_mode = 0;
@@ -151,14 +156,17 @@ impl CMAttachmentBearer {
         }
     }
 
+    #[inline]
     pub fn remove_attachment(&self, key: &CFString) {
         unsafe { CMRemoveAttachment(self.as_concrete_TypeRef(), key.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn remove_all_attachments(&self) {
         unsafe { CMRemoveAllAttachments(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn copy_dictionary_of_attachments(&self, attachment_mode: CMAttachmentMode) -> Option<CFDictionary<CFString, CFType>> {
         unsafe {
             let dict = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, self.as_concrete_TypeRef(), attachment_mode);
@@ -170,10 +178,12 @@ impl CMAttachmentBearer {
         }
     }
 
+    #[inline]
     pub fn set_attachments(&self, the_attachments: &CFDictionary<CFString, CFType>, attachment_mode: CMAttachmentMode) {
         unsafe { CMSetAttachments(self.as_concrete_TypeRef(), the_attachments.as_concrete_TypeRef(), attachment_mode) }
     }
 
+    #[inline]
     pub fn propagate_attachments(&self, destination: &mut CMAttachmentBearer) {
         unsafe { CMPropagateAttachments(self.as_concrete_TypeRef(), destination.0) }
     }

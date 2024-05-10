@@ -28,6 +28,7 @@ extern "C" {
 }
 
 impl CMClock {
+    #[inline]
     pub fn new_audio_device_clock(device_uid: &CFString) -> Result<CMClock, OSStatus> {
         unsafe {
             let mut clock: CMClockRef = null_mut();
@@ -40,6 +41,7 @@ impl CMClock {
         }
     }
 
+    #[inline]
     pub fn new_audio_device_clock_from_device_id(device_id: AudioDeviceID) -> Result<CMClock, OSStatus> {
         unsafe {
             let mut clock: CMClockRef = null_mut();
@@ -52,6 +54,7 @@ impl CMClock {
         }
     }
 
+    #[inline]
     pub fn set_audio_device_uid(&self, device_uid: &CFString) -> Result<(), OSStatus> {
         unsafe {
             let status = CMAudioDeviceClockSetAudioDeviceUID(self.as_concrete_TypeRef(), device_uid.as_concrete_TypeRef());
@@ -63,6 +66,7 @@ impl CMClock {
         }
     }
 
+    #[inline]
     pub fn set_audio_device_id(&self, device_id: AudioDeviceID) -> Result<(), OSStatus> {
         unsafe {
             let status = CMAudioDeviceClockSetAudioDeviceID(self.as_concrete_TypeRef(), device_id);
@@ -74,6 +78,7 @@ impl CMClock {
         }
     }
 
+    #[inline]
     pub fn get_audio_device(&self) -> Result<(CFString, AudioDeviceID, Boolean), OSStatus> {
         unsafe {
             let mut device_uid = null();

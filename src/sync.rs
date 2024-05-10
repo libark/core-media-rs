@@ -101,22 +101,27 @@ impl_TCFType!(CMClock, CMClockRef, CMClockGetTypeID);
 impl_CFTypeDescription!(CMClock);
 
 impl CMClock {
+    #[inline]
     pub fn get_host_time_clock() -> Self {
         unsafe { TCFType::wrap_under_create_rule(CMClockGetHostTimeClock()) }
     }
 
+    #[inline]
     pub fn convert_host_time_to_system_units(host_time: CMTime) -> u64 {
         unsafe { CMClockConvertHostTimeToSystemUnits(host_time) }
     }
 
+    #[inline]
     pub fn make_host_time_from_system_units(host_time: u64) -> CMTime {
         unsafe { CMClockMakeHostTimeFromSystemUnits(host_time) }
     }
 
+    #[inline]
     pub fn get_time(&self) -> CMTime {
         unsafe { CMClockGetTime(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_anchor_time(&self) -> Result<(CMTime, CMTime), OSStatus> {
         let mut clock_time = CMTime::default();
         let mut reference_clock_time = CMTime::default();
@@ -128,10 +133,12 @@ impl CMClock {
         }
     }
 
+    #[inline]
     pub fn might_drift(&self, other_clock: &CMClock) -> bool {
         unsafe { CMClockMightDrift(self.as_concrete_TypeRef(), other_clock.0) != 0 }
     }
 
+    #[inline]
     pub fn invalidate(&self) {
         unsafe { CMClockInvalidate(self.as_concrete_TypeRef()) }
     }
@@ -144,6 +151,7 @@ impl_TCFType!(CMTimebase, CMTimebaseRef, CMTimebaseGetTypeID);
 impl_CFTypeDescription!(CMTimebase);
 
 impl CMTimebase {
+    #[inline]
     pub fn new_with_source_clock(source_clock: &CMClock) -> Result<Self, OSStatus> {
         unsafe {
             let mut timebase: CMTimebaseRef = null_mut();
@@ -156,6 +164,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn new_with_source_timebase(source_timebase: &CMTimebase) -> Result<Self, OSStatus> {
         unsafe {
             let mut timebase: CMTimebaseRef = null_mut();
@@ -168,6 +177,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn copy_source_timebase(&self) -> Option<Self> {
         unsafe {
             let timebase = CMTimebaseCopySourceTimebase(self.as_concrete_TypeRef());
@@ -179,6 +189,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn copy_source_clock(&self) -> Option<CMClock> {
         unsafe {
             let clock = CMTimebaseCopySourceClock(self.as_concrete_TypeRef());
@@ -190,6 +201,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn copy_source(&self) -> Option<CMClockOrTimebase> {
         unsafe {
             let source = CMTimebaseCopySource(self.as_concrete_TypeRef());
@@ -201,6 +213,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn copy_ultimate_source_clock(&self) -> Option<CMClock> {
         unsafe {
             let clock = CMTimebaseCopyUltimateSourceClock(self.as_concrete_TypeRef());
@@ -212,6 +225,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn set_source_clock(&self, new_source_clock: &CMClock) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetSourceClock(self.as_concrete_TypeRef(), new_source_clock.0) };
         if status == 0 {
@@ -221,6 +235,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn set_source_timebase(&self, new_source_timebase: &CMTimebase) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetSourceTimebase(self.as_concrete_TypeRef(), new_source_timebase.0) };
         if status == 0 {
@@ -230,14 +245,17 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn get_time(&self) -> CMTime {
         unsafe { CMTimebaseGetTime(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_time_with_time_scale(&self, time_scale: CMTimeScale, rounding_method: CMTimeRoundingMethod) -> CMTime {
         unsafe { CMTimebaseGetTimeWithTimeScale(self.as_concrete_TypeRef(), time_scale, rounding_method) }
     }
 
+    #[inline]
     pub fn set_time(&self, time: CMTime) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetTime(self.as_concrete_TypeRef(), time) };
         if status == 0 {
@@ -247,6 +265,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn set_anchor_time(&self, timebase_time: CMTime, immediate_source_time: CMTime) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetAnchorTime(self.as_concrete_TypeRef(), timebase_time, immediate_source_time) };
         if status == 0 {
@@ -256,10 +275,12 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn get_rate(&self) -> f64 {
         unsafe { CMTimebaseGetRate(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_time_and_rate(&self) -> Result<(CMTime, f64), OSStatus> {
         let mut time = CMTime::default();
         let mut rate = 0.0;
@@ -271,6 +292,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn set_rate(&self, rate: f64) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetRate(self.as_concrete_TypeRef(), rate) };
         if status == 0 {
@@ -280,6 +302,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn set_rate_and_anchor_time(&self, rate: f64, timebase_time: CMTime, immediate_source_time: CMTime) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetRateAndAnchorTime(self.as_concrete_TypeRef(), rate, timebase_time, immediate_source_time) };
         if status == 0 {
@@ -289,10 +312,12 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn get_effective_rate(&self) -> f64 {
         unsafe { CMTimebaseGetEffectiveRate(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn add_timer(&self, timer: &CFRunLoopTimer, run_loop: &CFRunLoop) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseAddTimer(self.as_concrete_TypeRef(), timer.as_concrete_TypeRef(), run_loop.as_concrete_TypeRef()) };
         if status == 0 {
@@ -302,6 +327,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn remove_timer(&self, timer: &CFRunLoopTimer) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseRemoveTimer(self.as_concrete_TypeRef(), timer.as_concrete_TypeRef()) };
         if status == 0 {
@@ -311,6 +337,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn set_timer_next_fire_time(&self, timer: &CFRunLoopTimer, fire_time: CMTime, flags: u32) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetTimerNextFireTime(self.as_concrete_TypeRef(), timer.as_concrete_TypeRef(), fire_time, flags) };
         if status == 0 {
@@ -320,6 +347,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn set_timer_to_fire_immediately(&self, timer: &CFRunLoopTimer) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseSetTimerToFireImmediately(self.as_concrete_TypeRef(), timer.as_concrete_TypeRef()) };
         if status == 0 {
@@ -329,6 +357,7 @@ impl CMTimebase {
         }
     }
 
+    #[inline]
     pub fn notification_barrier(&self) -> Result<(), OSStatus> {
         let status = unsafe { CMTimebaseNotificationBarrier(self.as_concrete_TypeRef()) };
         if status == 0 {
@@ -392,6 +421,7 @@ impl Clone for CMClockOrTimebase {
 }
 
 impl PartialEq for CMClockOrTimebase {
+    #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.as_CFType().eq(&other.as_CFType())
     }
@@ -400,10 +430,12 @@ impl PartialEq for CMClockOrTimebase {
 impl Eq for CMClockOrTimebase {}
 
 impl CMClockOrTimebase {
+    #[inline]
     pub fn get_relative_rate(&self, relative_to: &CMClockOrTimebase) -> f64 {
         unsafe { CMSyncGetRelativeRate(self.as_concrete_TypeRef(), relative_to.0) }
     }
 
+    #[inline]
     pub fn get_relative_rate_and_anchor_time(&self, relative_to: &CMClockOrTimebase) -> Result<(f64, CMTime, CMTime), OSStatus> {
         let mut relative_rate = 0.0;
         let mut of_clock_or_timebase_anchor_time = CMTime::default();
@@ -424,14 +456,17 @@ impl CMClockOrTimebase {
         }
     }
 
+    #[inline]
     pub fn convert_time(&self, time: CMTime, from: &CMClockOrTimebase, to: &CMClockOrTimebase) -> CMTime {
         unsafe { CMSyncConvertTime(time, from.0, to.0) }
     }
 
+    #[inline]
     pub fn might_drift(&self, other: &CMClockOrTimebase) -> bool {
         unsafe { CMSyncMightDrift(self.as_concrete_TypeRef(), other.0) != 0 }
     }
 
+    #[inline]
     pub fn get_time(&self) -> CMTime {
         unsafe { CMSyncGetTime(self.as_concrete_TypeRef()) }
     }

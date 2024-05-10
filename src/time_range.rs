@@ -63,40 +63,49 @@ extern "C" {
 }
 
 impl PartialEq for CMTimeRange {
+    #[inline]
     fn eq(&self, other: &Self) -> bool {
         unsafe { CMTimeRangeEqual(*self, *other) != 0 }
     }
 }
 
 impl CMTimeRange {
+    #[inline]
     pub fn make(start: CMTime, duration: CMTime) -> Self {
         unsafe { CMTimeRangeMake(start, duration) }
     }
 
+    #[inline]
     pub fn get_union(&self, other: CMTimeRange) -> CMTimeRange {
         unsafe { CMTimeRangeGetUnion(*self, other) }
     }
 
+    #[inline]
     pub fn get_intersection(&self, other: CMTimeRange) -> CMTimeRange {
         unsafe { CMTimeRangeGetIntersection(*self, other) }
     }
 
+    #[inline]
     pub fn equal(&self, other: CMTimeRange) -> bool {
         unsafe { CMTimeRangeEqual(*self, other) != 0 }
     }
 
+    #[inline]
     pub fn contains_time(&self, time: CMTime) -> bool {
         unsafe { CMTimeRangeContainsTime(*self, time) != 0 }
     }
 
+    #[inline]
     pub fn contains_time_range(&self, other: CMTimeRange) -> bool {
         unsafe { CMTimeRangeContainsTimeRange(*self, other) != 0 }
     }
 
+    #[inline]
     pub fn get_end(&self) -> CMTime {
         unsafe { CMTimeRangeGetEnd(*self) }
     }
 
+    #[inline]
     pub fn copy_as_dictionary(&self) -> Option<CFDictionary<CFString, CFDictionary<CFString, CFNumber>>> {
         unsafe {
             let dict = CMTimeRangeCopyAsDictionary(*self, kCFAllocatorDefault);
@@ -108,10 +117,12 @@ impl CMTimeRange {
         }
     }
 
+    #[inline]
     pub fn make_from_dictionary(dict: &CFDictionary<CFString, CFDictionary<CFString, CFNumber>>) -> Self {
         unsafe { CMTimeRangeMakeFromDictionary(dict.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn copy_description(&self) -> Option<CFString> {
         unsafe {
             let description = CMTimeRangeCopyDescription(kCFAllocatorDefault, *self);
@@ -123,20 +134,24 @@ impl CMTimeRange {
         }
     }
 
+    #[inline]
     pub fn show(&self) {
         unsafe { CMTimeRangeShow(*self) }
     }
 }
 
 impl CMTimeMapping {
+    #[inline]
     pub fn make(source: CMTimeRange, target: CMTimeRange) -> Self {
         unsafe { CMTimeMappingMake(source, target) }
     }
 
+    #[inline]
     pub fn make_empty(target: CMTimeRange) -> Self {
         unsafe { CMTimeMappingMakeEmpty(target) }
     }
 
+    #[inline]
     pub fn copy_as_dictionary(&self) -> Option<CFDictionary<CFString, CFDictionary<CFString, CFDictionary<CFString, CFNumber>>>> {
         unsafe {
             let dict = CMTimeMappingCopyAsDictionary(*self, kCFAllocatorDefault);
@@ -148,10 +163,12 @@ impl CMTimeMapping {
         }
     }
 
+    #[inline]
     pub fn make_from_dictionary(dict: &CFDictionary<CFString, CFDictionary<CFString, CFDictionary<CFString, CFNumber>>>) -> Self {
         unsafe { CMTimeMappingMakeFromDictionary(dict.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn copy_description(&self) -> Option<CFString> {
         unsafe {
             let description = CMTimeMappingCopyDescription(kCFAllocatorDefault, *self);
@@ -163,6 +180,7 @@ impl CMTimeMapping {
         }
     }
 
+    #[inline]
     pub fn show(&self) {
         unsafe { CMTimeMappingShow(*self) }
     }

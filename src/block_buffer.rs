@@ -135,6 +135,7 @@ impl_TCFType!(CMBlockBuffer, CMBlockBufferRef, CMBlockBufferGetTypeID);
 impl_CFTypeDescription!(CMBlockBuffer);
 
 impl CMBlockBuffer {
+    #[inline]
     pub fn new_empty(sub_block_capacity: size_t, flags: CMBlockBufferFlags) -> Result<CMBlockBuffer, OSStatus> {
         unsafe {
             let mut block_buffer: CMBlockBufferRef = null_mut();
@@ -147,6 +148,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub unsafe fn new_with_memory_block(
         memory_block: &[u8],
         custom_block_source: *const CMBlockBufferCustomBlockSource,
@@ -175,6 +177,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn new_with_buffer_reference(
         &self,
         offset_to_data: size_t,
@@ -199,6 +202,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub unsafe fn new_contiguous(
         &self,
         custom_block_source: *const CMBlockBufferCustomBlockSource,
@@ -226,6 +230,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub unsafe fn append_memory_block(
         &self,
         memory_block: &[u8],
@@ -253,6 +258,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn append_buffer_reference(
         &self,
         target_block_buf: &CMBlockBuffer,
@@ -270,10 +276,12 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn assure_block_memory(&self) -> OSStatus {
         unsafe { CMBlockBufferAssureBlockMemory(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn access_data_bytes(&self, offset: size_t, temporary_block: &mut [u8]) -> Result<&mut [u8], OSStatus> {
         unsafe {
             let mut returned_pointer: *mut c_void = null_mut();
@@ -292,6 +300,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn copy_data_bytes(&self, offset_to_data: size_t, destination: &mut [u8]) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBlockBufferCopyDataBytes(
@@ -308,6 +317,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn replace_data_bytes(&self, source_bytes: &[u8], offset_into_destination: size_t) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBlockBufferReplaceDataBytes(
@@ -324,6 +334,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn fill_data_bytes(&self, fill_byte: u8, offset_into_destination: size_t, data_length: size_t) -> Result<(), OSStatus> {
         unsafe {
             let status = CMBlockBufferFillDataBytes(fill_byte, self.as_concrete_TypeRef(), offset_into_destination, data_length);
@@ -335,6 +346,7 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn get_data(&self, offset: size_t) -> Result<&mut [u8], OSStatus> {
         unsafe {
             let mut length_at_offset: size_t = 0;
@@ -349,14 +361,17 @@ impl CMBlockBuffer {
         }
     }
 
+    #[inline]
     pub fn get_data_length(&self) -> size_t {
         unsafe { CMBlockBufferGetDataLength(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn is_range_contiguous(&self, offset: size_t, length: size_t) -> bool {
         unsafe { CMBlockBufferIsRangeContiguous(self.as_concrete_TypeRef(), offset, length) != 0 }
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
         unsafe { CMBlockBufferIsEmpty(self.as_concrete_TypeRef()) != 0 }
     }

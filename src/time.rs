@@ -76,67 +76,81 @@ extern "C" {
 
 #[cfg(feature = "objc")]
 unsafe impl Encode for CMTime {
-    const ENCODING: Encoding =
-        Encoding::Struct("?", &[CMTimeValue::ENCODING, CMTimeScale::ENCODING, CMTimeFlags::ENCODING, CMTimeEpoch::ENCODING]);
+    const ENCODING: Encoding = Encoding::Struct("?", &[CMTimeValue::ENCODING, CMTimeScale::ENCODING, CMTimeFlags::ENCODING, CMTimeEpoch::ENCODING]);
 }
 
 impl CMTime {
+    #[inline]
     pub fn make(value: CMTimeValue, timescale: CMTimeScale) -> Self {
         unsafe { CMTimeMake(value, timescale) }
     }
 
+    #[inline]
     pub fn make_with_epoch(value: CMTimeValue, timescale: CMTimeScale, epoch: CMTimeEpoch) -> Self {
         unsafe { CMTimeMakeWithEpoch(value, timescale, epoch) }
     }
 
+    #[inline]
     pub fn make_with_seconds(seconds: f64, preferred_time_scale: i32) -> Self {
         unsafe { CMTimeMakeWithSeconds(seconds, preferred_time_scale) }
     }
 
+    #[inline]
     pub fn get_seconds(&self) -> f64 {
         unsafe { CMTimeGetSeconds(*self) }
     }
 
+    #[inline]
     pub fn convert_scale(&self, new_timescale: CMTimeScale, method: CMTimeRoundingMethod) -> Self {
         unsafe { CMTimeConvertScale(*self, new_timescale, method) }
     }
 
+    #[inline]
     pub fn add(&self, time: CMTime) -> Self {
         unsafe { CMTimeAdd(*self, time) }
     }
 
+    #[inline]
     pub fn subtract(&self, time: CMTime) -> Self {
         unsafe { CMTimeSubtract(*self, time) }
     }
 
+    #[inline]
     pub fn multiply(&self, multiplier: i32) -> Self {
         unsafe { CMTimeMultiply(*self, multiplier) }
     }
 
+    #[inline]
     pub fn multiply_by_float64(&self, multiplier: f64) -> Self {
         unsafe { CMTimeMultiplyByFloat64(*self, multiplier) }
     }
 
+    #[inline]
     pub fn multiply_by_ratio(&self, multiplier: i32, divisor: i32) -> Self {
         unsafe { CMTimeMultiplyByRatio(*self, multiplier, divisor) }
     }
 
+    #[inline]
     pub fn compare(&self, time: CMTime) -> i32 {
         unsafe { CMTimeCompare(*self, time) }
     }
 
+    #[inline]
     pub fn minimum(&self, time: CMTime) -> Self {
         unsafe { CMTimeMinimum(*self, time) }
     }
 
+    #[inline]
     pub fn maximum(&self, time: CMTime) -> Self {
         unsafe { CMTimeMaximum(*self, time) }
     }
 
+    #[inline]
     pub fn absolute_value(&self) -> Self {
         unsafe { CMTimeAbsoluteValue(*self) }
     }
 
+    #[inline]
     pub fn copy_as_dictionary(&self) -> Option<CFDictionary<CFString, CFNumber>> {
         unsafe {
             let dict = CMTimeCopyAsDictionary(*self, kCFAllocatorDefault);
@@ -148,10 +162,12 @@ impl CMTime {
         }
     }
 
+    #[inline]
     pub fn make_from_dictionary(dictionary_representation: &CFDictionary<CFString, CFNumber>) -> Self {
         unsafe { CMTimeMakeFromDictionary(dictionary_representation.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn copy_description(&self) -> Option<CFString> {
         unsafe {
             let description = CMTimeCopyDescription(kCFAllocatorDefault, *self);
@@ -163,6 +179,7 @@ impl CMTime {
         }
     }
 
+    #[inline]
     pub fn show(&self) {
         unsafe { CMTimeShow(*self) }
     }

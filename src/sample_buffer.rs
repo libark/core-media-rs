@@ -342,6 +342,7 @@ impl_TCFType!(CMSampleBuffer, CMSampleBufferRef, CMSampleBufferGetTypeID);
 impl_CFTypeDescription!(CMSampleBuffer);
 
 impl CMSampleBuffer {
+    #[inline]
     pub unsafe fn new(
         data_buffer: Option<&CMBlockBuffer>,
         data_ready: bool,
@@ -376,6 +377,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn new_with_make_data_ready_closure<F>(
         data_buffer: Option<&CMBlockBuffer>,
         data_ready: bool,
@@ -418,6 +420,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn new_ready(
         data_buffer: &CMBlockBuffer,
         format_description: Option<&CMFormatDescription>,
@@ -518,6 +521,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn new_audio_sample_buffer_ready_with_packet_descriptions(
         data_buffer: &CMBlockBuffer,
         format_description: &CMFormatDescription,
@@ -606,6 +610,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn from_image_buffer_ready(
         image_buffer: &CVImageBuffer,
         format_description: &CMVideoFormatDescription,
@@ -628,6 +633,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn copy(&self) -> Result<CMSampleBuffer, OSStatus> {
         let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe { CMSampleBufferCreateCopy(kCFAllocatorDefault, self.as_concrete_TypeRef(), &mut sample_buffer) };
@@ -638,6 +644,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn copy_with_new_timing(&self, sample_timing_array: Option<&[CMSampleTimingInfo]>) -> Result<CMSampleBuffer, OSStatus> {
         let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status = unsafe {
@@ -656,6 +663,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn copy_for_range(&self, sample_range: CFRange) -> Result<CMSampleBuffer, OSStatus> {
         let mut sample_buffer: CMSampleBufferRef = null_mut();
         let status =
@@ -667,6 +675,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn set_data_buffer(&self, data_buffer: &CMBlockBuffer) -> Result<(), OSStatus> {
         let status = unsafe { CMSampleBufferSetDataBuffer(self.as_concrete_TypeRef(), data_buffer.as_concrete_TypeRef()) };
         if status == 0 {
@@ -676,6 +685,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn get_data_buffer(&self) -> Option<CMBlockBuffer> {
         unsafe {
             let data_buffer = CMSampleBufferGetDataBuffer(self.as_concrete_TypeRef());
@@ -687,6 +697,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn get_image_buffer(&self) -> Option<CVImageBuffer> {
         unsafe {
             let image_buffer = CMSampleBufferGetImageBuffer(self.as_concrete_TypeRef());
@@ -698,6 +709,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn set_data_buffer_from_audio_buffer_list(&self, flags: u32, buffer_list: &AudioBufferList) -> Result<(), OSStatus> {
         let status = unsafe {
             CMSampleBufferSetDataBufferFromAudioBufferList(self.as_concrete_TypeRef(), kCFAllocatorDefault, kCFAllocatorDefault, flags, buffer_list)
@@ -709,6 +721,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn set_data_ready(&self) -> Result<(), OSStatus> {
         let status = unsafe { CMSampleBufferSetDataReady(self.as_concrete_TypeRef()) };
         if status == 0 {
@@ -718,10 +731,12 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn is_data_ready(&self) -> bool {
         unsafe { CMSampleBufferDataIsReady(self.as_concrete_TypeRef()) != 0 }
     }
 
+    #[inline]
     pub fn set_data_failed(&self, status: OSStatus) -> Result<(), OSStatus> {
         let status = unsafe { CMSampleBufferSetDataFailed(self.as_concrete_TypeRef(), status) };
         if status == 0 {
@@ -731,12 +746,14 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn has_data_failed(&self) -> (OSStatus, bool) {
         let mut status = 0;
         let has_failed = unsafe { CMSampleBufferHasDataFailed(self.as_concrete_TypeRef(), &mut status) != 0 };
         (status, has_failed)
     }
 
+    #[inline]
     pub fn make_data_ready(&self) -> Result<(), OSStatus> {
         let status = unsafe { CMSampleBufferMakeDataReady(self.as_concrete_TypeRef()) };
         if status == 0 {
@@ -746,6 +763,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn track_data_readiness(&self, sample_buffer_to_track: &CMSampleBuffer) -> Result<(), OSStatus> {
         let status = unsafe { CMSampleBufferTrackDataReadiness(self.as_concrete_TypeRef(), sample_buffer_to_track.as_concrete_TypeRef()) };
         if status == 0 {
@@ -755,6 +773,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn invalidate(&self) -> Result<(), OSStatus> {
         let status = unsafe { CMSampleBufferInvalidate(self.as_concrete_TypeRef()) };
         if status == 0 {
@@ -803,34 +822,42 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn is_valid(&self) -> bool {
         unsafe { CMSampleBufferIsValid(self.as_concrete_TypeRef()) != 0 }
     }
 
+    #[inline]
     pub fn get_num_samples(&self) -> CMItemCount {
         unsafe { CMSampleBufferGetNumSamples(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_duration(&self) -> CMTime {
         unsafe { CMSampleBufferGetDuration(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_presentation_time_stamp(&self) -> CMTime {
         unsafe { CMSampleBufferGetPresentationTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_decode_time_stamp(&self) -> CMTime {
         unsafe { CMSampleBufferGetDecodeTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_output_duration(&self) -> CMTime {
         unsafe { CMSampleBufferGetOutputDuration(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_output_presentation_time_stamp(&self) -> CMTime {
         unsafe { CMSampleBufferGetOutputPresentationTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn set_output_presentation_time_stamp(&self, output_presentation_time_stamp: CMTime) -> Result<(), OSStatus> {
         let status = unsafe { CMSampleBufferSetOutputPresentationTimeStamp(self.as_concrete_TypeRef(), output_presentation_time_stamp) };
         if status == 0 {
@@ -840,10 +867,12 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn get_output_decode_time_stamp(&self) -> CMTime {
         unsafe { CMSampleBufferGetOutputDecodeTimeStamp(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_sample_timing_info_array(&self) -> Option<Vec<CMSampleTimingInfo>> {
         unsafe {
             let mut timing_array_entries_needed = 0;
@@ -865,6 +894,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn get_sample_timing_info(&self, sample_index: CMItemCount) -> Option<CMSampleTimingInfo> {
         unsafe {
             let mut timing_info = CMSampleTimingInfo::default();
@@ -877,6 +907,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn get_sample_size_array(&self) -> Option<Vec<size_t>> {
         unsafe {
             let mut size_array_entries_needed = 0;
@@ -898,14 +929,17 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn get_sample_size(&self, sample_index: CMItemCount) -> size_t {
         unsafe { CMSampleBufferGetSampleSize(self.as_concrete_TypeRef(), sample_index) }
     }
 
+    #[inline]
     pub fn get_total_sample_size(&self) -> usize {
         unsafe { CMSampleBufferGetTotalSampleSize(self.as_concrete_TypeRef()) }
     }
 
+    #[inline]
     pub fn get_format_description(&self) -> Option<CMFormatDescription> {
         unsafe {
             let format_description = CMSampleBufferGetFormatDescription(self.as_concrete_TypeRef());
@@ -917,6 +951,7 @@ impl CMSampleBuffer {
         }
     }
 
+    #[inline]
     pub fn get_sample_attachments_array(&self, create_if_necessary: bool) -> Option<CFArray<CFDictionary<CFString, CFType>>> {
         unsafe {
             let attachments = CMSampleBufferGetSampleAttachmentsArray(self.as_concrete_TypeRef(), create_if_necessary as Boolean);
